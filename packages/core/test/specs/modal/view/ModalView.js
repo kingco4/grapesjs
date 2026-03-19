@@ -53,4 +53,25 @@ describe('ModalView', () => {
     model.set('open', 1);
     expect(view.el.style.display).toEqual('');
   });
+
+  test('Open dialog moves focus to close button and exposes dialog semantics', () => {
+    const trigger = document.createElement('button');
+    document.body.appendChild(trigger);
+    trigger.focus();
+    model.set('open', 1);
+    const closeBtn = view.el.querySelector('[data-close-modal]');
+    const dialog = view.el.querySelector('[role="dialog"]');
+    expect(document.activeElement).toBe(closeBtn);
+    expect(dialog.getAttribute('role')).toBe('dialog');
+    expect(dialog.getAttribute('aria-modal')).toBe('true');
+  });
+
+  test('Close dialog restores focus to previous element', () => {
+    const trigger = document.createElement('button');
+    document.body.appendChild(trigger);
+    trigger.focus();
+    model.set('open', 1);
+    model.set('open', 0);
+    expect(document.activeElement).toBe(trigger);
+  });
 });

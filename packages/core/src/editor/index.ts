@@ -79,6 +79,7 @@ import UtilsModule from '../utils';
 import html from '../utils/html';
 import defConfig, { EditorConfig, EditorConfigKeys } from './config/config';
 import EditorModel, { EditorLoadOptions } from './model/Editor';
+import { AccessibilityReport } from './model/AccessibilityValidator';
 import {
   EditorConfigType,
   EditorEvent,
@@ -246,6 +247,26 @@ export default class Editor implements IBaseModule<EditorConfig> {
    */
   getHtml(opts?: EditorModelParam<'getHtml', 0>) {
     return this.em.getHtml(opts);
+  }
+
+  /**
+   * Validate generated HTML for a set of basic accessibility issues.
+   * @param {Object} [opts={}] Options
+   * @param {String} [opts.html] Validate a custom HTML string instead of the current editor output
+   * @param {Component} [opts.component] Validate the generated HTML of a specific component
+   * @returns {Object} Accessibility report
+   */
+  validateAccessibility(opts?: { html?: string; component?: Component }): AccessibilityReport {
+    return this.em.validateAccessibility(opts);
+  }
+
+  /**
+   * Return the list of generated-content accessibility issues.
+   * @param {Object} [opts={}] Options
+   * @returns {Array} Accessibility issues
+   */
+  getAccessibilityIssues(opts?: { html?: string; component?: Component }) {
+    return this.em.getAccessibilityIssues(opts);
   }
 
   /**

@@ -45,20 +45,24 @@ const config: () => KeymapsConfig = () => ({
       handler: 'core:paste',
     },
     'core:component-next': {
-      keys: 's',
+      keys: 's, down, right',
       handler: 'core:component-next',
+      opts: { prevent: true },
     },
     'core:component-prev': {
-      keys: 'w',
+      keys: 'w, up, left',
       handler: 'core:component-prev',
+      opts: { prevent: true },
     },
     'core:component-enter': {
-      keys: 'd',
+      keys: 'd, enter',
       handler: 'core:component-enter',
+      opts: { prevent: true },
     },
     'core:component-exit': {
-      keys: 'a',
+      keys: 'a, esc',
       handler: 'core:component-exit',
+      opts: { prevent: true },
     },
     'core:component-delete': {
       keys: 'backspace, delete',
