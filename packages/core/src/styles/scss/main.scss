@@ -165,3 +165,49 @@ $colorsAll: (one, var(--gjs-primary-color)), (two, var(--gjs-secondary-color)), 
 .cm-s-hopscotch span.cm-error {
   color: #ffffff;
 }
+
+// Screen-reader-only utility: visually hidden but accessible to AT
+.#{gjs_vars.$app-prefix}sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// Accessibility status panel shown in the editor UI
+.gjs-a11y-status {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  max-width: 320px;
+  z-index: 5;
+  padding: 10px 12px;
+  border-radius: 4px;
+  background: rgba(34, 34, 34, 0.92);
+  color: #fff;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
+  font-size: 12px;
+
+  ul {
+    margin: 8px 0 0;
+    padding-left: 18px;
+  }
+
+  &__title {
+    font-weight: 600;
+
+    &--ok {
+      color: var(--gjs-color-green);
+    }
+  }
+
+  &__more {
+    margin-top: 8px;
+    color: var(--gjs-color-warn);
+  }
+}

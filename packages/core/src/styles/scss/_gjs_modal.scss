@@ -37,6 +37,11 @@
     position: absolute;
     right: 15px;
     top: 5px;
+
+    &:focus-visible {
+      outline: 2px solid var(--gjs-color-blue);
+      outline-offset: 2px;
+    }
   }
 
   &active .#{gjs_vars.$mdl-prefix}dialog {

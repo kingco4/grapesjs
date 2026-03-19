@@ -33,6 +33,7 @@ export default class ItemView extends View {
       'click [data-toggle-visible]': 'toggleVisibility',
       'click [data-toggle-open]': 'toggleOpening',
       'click [data-toggle-select]': 'handleSelect',
+      'keydown [data-toggle-select]': 'handleTreeItemKeydown',
       'mouseover [data-toggle-select]': 'handleHover',
       'mouseout [data-toggle-select]': 'handleHoverOut',
       'dblclick [data-name]': 'handleEdit',
@@ -56,34 +57,50 @@ export default class ItemView extends View {
     const clsBase = `${pfx}layer`;
     const { icons } = em?.getConfig();
     const { move, eye, eyeOff, chevron } = icons!;
+    const isOpen = module.isOpen(model);
+    const isVisible = module.isVisible(model);
+    const hasChildren = count > 0;
 
     return `
-      <div class="${pfx}layer-item ${ppfx}one-bg" data-toggle-select>
+      <div class="${pfx}layer-item ${ppfx}one-bg" data-toggle-select
+        role="treeitem"
+        tabindex="0"
+        aria-selected="false"
+        aria-label="${name}"
+        ${hasChildren ? `aria-expanded="${isOpen}"` : ''}
+      >
         <div class="${pfx}layer-item-left">
           ${
             hidable
-              ? `<i class="${pfx}layer-vis" data-toggle-visible>
-                <i class="${pfx}layer-vis-on">${eye}</i>
-                <i class="${pfx}layer-vis-off">${eyeOff}</i>
+              ? `<i class="${pfx}layer-vis" data-toggle-visible
+                  role="button"
+                  tabindex="-1"
+                  aria-label="${isVisible ? 'Hide' : 'Show'} ${name}"
+                  aria-pressed="${isVisible}">
+                <i class="${pfx}layer-vis-on" aria-hidden="true">${eye}</i>
+                <i class="${pfx}layer-vis-off" aria-hidden="true">${eyeOff}</i>
               </i>`
               : ''
           }
           <div class="${clsTitleC}">
             <div class="${clsTitle}" style="padding-left: ${gut}">
               <div class="${pfx}layer-title-inn" title="${name}">
-                <i class="${this.clsCaret}" data-toggle-open>${chevron}</i>
-                  ${icon ? `<span class="${clsBase}__icon">${icon}</span>` : ''}
+                <i class="${this.clsCaret}" data-toggle-open aria-hidden="true">${chevron}</i>
+                  ${icon ? `<span class="${clsBase}__icon" aria-hidden="true">${icon}</span>` : ''}
                 <span class="${clsInput}" data-name>${name}</span>
               </div>
             </div>
           </div>
         </div>
         <div class="${pfx}layer-item-right">
-          <div class="${this.clsCount}" data-count>${count || ''}</div>
-          <div class="${this.clsMove}" ${dataToggleMove}>${move || ''}</div>
+          <div class="${this.clsCount}" data-count aria-hidden="true">${count || ''}</div>
+          <div class="${this.clsMove}" ${dataToggleMove}
+            role="button"
+            tabindex="-1"
+            aria-label="Move ${name}">${move || ''}</div>
         </div>
       </div>
-      <div class="${this.clsChildren}"></div>
+      <div class="${this.clsChildren}" role="group" aria-label="${name} children"></div>
     `;
   }
 
@@ -185,6 +202,12 @@ export default class ItemView extends View {
     const method = hidden ? 'addClass' : 'removeClass';
     this.$el[method](hClass);
     this.getVisibilityEl()[method](`${pfx}layer-off`);
+
+    // Update ARIA attributes
+    const visEl = this.getVisibilityEl();
+    const name = model.getName();
+    visEl.attr('aria-label', `${hidden ? 'Show' : 'Hide'} ${name}`);
+    visEl.attr('aria-pressed', String(!hidden));
   }
 
   updateMove() {
@@ -256,6 +279,51 @@ export default class ItemView extends View {
   }
 
   /**
+   * Handle keyboard navigation on tree items (arrow keys, Enter, Space)
+   */
+  handleTreeItemKeydown(ev: KeyboardEvent) {
+    const { model, module } = this;
+    const key = ev.key;
+
+    if (key === 'Enter' || key === ' ') {
+      ev.preventDefault();
+      this.handleSelect();
+      return;
+    }
+
+    if (key === 'ArrowRight') {
+      ev.preventDefault();
+      if (module.getComponents(model).length && !module.isOpen(model)) {
+        module.setOpen(model, true);
+      }
+      return;
+    }
+
+    if (key === 'ArrowLeft') {
+      ev.preventDefault();
+      if (module.isOpen(model)) {
+        module.setOpen(model, false);
+      } else if (this.parentView) {
+        const parentItem = this.parentView.getItemContainer().get(0) as HTMLElement | undefined;
+        parentItem?.focus();
+      }
+      return;
+    }
+
+    if (key === 'ArrowDown' || key === 'ArrowUp') {
+      ev.preventDefault();
+      const allItems = Array.from(
+        document.querySelectorAll<HTMLElement>(`[role="treeitem"]`),
+      ).filter((el) => el.tabIndex >= 0 || el.closest('[role="tree"]'));
+      const currentIndex = allItems.indexOf(ev.currentTarget as HTMLElement);
+      const nextIndex = key === 'ArrowDown' ? currentIndex + 1 : currentIndex - 1;
+      if (nextIndex >= 0 && nextIndex < allItems.length) {
+        allItems[nextIndex].focus();
+      }
+    }
+  }
+
+  /**
    * Update item opening
    *
    * @return void
@@ -265,13 +333,20 @@ export default class ItemView extends View {
     const clsOpen = 'open';
     const clsChvOpen = `${pfx}layer-open`;
     const caret = this.getCaret();
+    const isOpen = this.module.isOpen(model);
 
-    if (this.module.isOpen(model)) {
+    if (isOpen) {
       $el.addClass(clsOpen);
       caret.addClass(clsChvOpen);
     } else {
       $el.removeClass(clsOpen);
       caret.removeClass(clsChvOpen);
+    }
+
+    // Update aria-expanded on the treeitem
+    const itemContainer = this.getItemContainer();
+    if (this.module.getComponents(model).length) {
+      itemContainer.attr('aria-expanded', String(isOpen));
     }
   }
 
@@ -293,14 +368,18 @@ export default class ItemView extends View {
   /**
    * Handle component selection
    */
-  handleSelect(event?: MouseEvent) {
-    event?.stopPropagation();
+  handleSelect(event?: MouseEvent | undefined) {
+    if (event) event.stopPropagation();
     const { module, model } = this;
     module.setLayerData(model, { selected: true }, { event });
+
+    // Update aria-selected on treeitem
+    const itemEl = this.getItemContainer();
+    itemEl.attr('aria-selected', 'true');
   }
 
   /**
-   * Handle component selection
+   * Handle component hover
    */
   handleHover(ev?: MouseEvent) {
     ev?.stopPropagation();
@@ -349,6 +428,10 @@ export default class ItemView extends View {
         noExtHl: true,
       },
     ]);
+
+    // Sync aria-selected with selection status
+    const isSelected = this.model.get('status') === 'selected';
+    this.getItemContainer().attr('aria-selected', String(isSelected));
   }
 
   getItemContainer() {
@@ -370,6 +453,13 @@ export default class ItemView extends View {
     title[count ? 'removeClass' : 'addClass'](clsNoChild);
     countEl.html(`${count || ''}`);
     !count && module.setOpen(model, false);
+
+    // Update aria-expanded presence
+    if (count) {
+      itemEl.attr('aria-expanded', String(module.isOpen(model)));
+    } else {
+      itemEl.removeAttr('aria-expanded');
+    }
   }
 
   getCaret() {
