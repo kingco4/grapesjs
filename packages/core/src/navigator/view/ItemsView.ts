@@ -168,8 +168,6 @@ export default class ItemsView extends View {
       .forEach((model) => this.addToCollection(model, frag));
     el.appendChild(frag);
     el.className = this.className!;
-    el.setAttribute('role', this.parentView ? 'group' : 'tree');
-    !this.parentView && el.setAttribute('aria-label', 'Layers');
     return this;
   }
 }

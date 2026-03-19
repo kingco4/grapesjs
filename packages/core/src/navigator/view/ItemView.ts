@@ -33,7 +33,6 @@ export default class ItemView extends View {
       'click [data-toggle-visible]': 'toggleVisibility',
       'click [data-toggle-open]': 'toggleOpening',
       'click [data-toggle-select]': 'handleSelect',
-      'keydown [data-toggle-select]': 'handleTreeItemKeydown',
       'mouseover [data-toggle-select]': 'handleHover',
       'mouseout [data-toggle-select]': 'handleHoverOut',
       'dblclick [data-name]': 'handleEdit',
@@ -274,8 +273,6 @@ export default class ItemView extends View {
       $el.removeClass(clsOpen);
       caret.removeClass(clsChvOpen);
     }
-
-    this.updateTreeItemA11y();
   }
 
   /**
@@ -352,112 +349,10 @@ export default class ItemView extends View {
         noExtHl: true,
       },
     ]);
-    this.updateTreeItemA11y();
   }
 
   getItemContainer() {
     return this.$el.children('[data-toggle-select]');
-  }
-
-  getTreeItemEl() {
-    return this.getItemContainer()[0] as HTMLElement;
-  }
-
-  private getVisibleTreeItems() {
-    const root = this.el.closest('[role="tree"]') || this.el;
-    return Array.from(root.querySelectorAll<HTMLElement>('[role="treeitem"]')).filter((item) => {
-      let current: HTMLElement | null = item;
-
-      while (current && current !== root) {
-        const parentLayer = current.parentElement?.closest(`.${this.pfx}layer`);
-        const isInChildGroup = current.parentElement?.classList.contains(this.clsChildren);
-
-        if (isInChildGroup && parentLayer && !parentLayer.classList.contains('open')) {
-          return false;
-        }
-
-        current = current.parentElement;
-      }
-
-      return true;
-    });
-  }
-
-  private focusTreeItem(el?: HTMLElement) {
-    el?.focus();
-  }
-
-  private updateTreeItemA11y() {
-    const el = this.getTreeItemEl();
-    if (!el) return;
-
-    const hasChildren = !!this.module.getComponents(this.model).length;
-    el.setAttribute('role', 'treeitem');
-    el.setAttribute('tabindex', '0');
-    el.setAttribute('aria-label', this.model.getName());
-    el.setAttribute('aria-level', `${this.opt.level + 1}`);
-    el.setAttribute('aria-selected', String(this.model.get('status') === 'selected'));
-
-    if (hasChildren) {
-      el.setAttribute('aria-expanded', String(this.module.isOpen(this.model)));
-    } else {
-      el.removeAttribute('aria-expanded');
-    }
-  }
-
-  handleTreeItemKeydown(event: KeyboardEvent) {
-    const visibleItems = this.getVisibleTreeItems();
-    const currentItem = this.getTreeItemEl();
-    const currentIndex = visibleItems.indexOf(currentItem);
-    const hasChildren = !!this.module.getComponents(this.model).length;
-
-    switch (event.key) {
-      case 'Enter':
-      case ' ': {
-        event.preventDefault();
-        this.handleSelect();
-        break;
-      }
-      case 'ArrowRight': {
-        event.preventDefault();
-        if (hasChildren && !this.module.isOpen(this.model)) {
-          this.toggleOpening();
-        } else if (hasChildren) {
-          const firstChild = this.el.querySelector<HTMLElement>(`.${this.clsChildren} [role="treeitem"]`);
-          this.focusTreeItem(firstChild || currentItem);
-        }
-        break;
-      }
-      case 'ArrowLeft': {
-        event.preventDefault();
-        if (hasChildren && this.module.isOpen(this.model)) {
-          this.toggleOpening();
-        } else {
-          this.focusTreeItem(this.parentView?.getTreeItemEl?.());
-        }
-        break;
-      }
-      case 'ArrowDown': {
-        event.preventDefault();
-        this.focusTreeItem(visibleItems[currentIndex + 1] || currentItem);
-        break;
-      }
-      case 'ArrowUp': {
-        event.preventDefault();
-        this.focusTreeItem(visibleItems[currentIndex - 1] || currentItem);
-        break;
-      }
-      case 'Home': {
-        event.preventDefault();
-        this.focusTreeItem(visibleItems[0]);
-        break;
-      }
-      case 'End': {
-        event.preventDefault();
-        this.focusTreeItem(visibleItems[visibleItems.length - 1]);
-        break;
-      }
-    }
   }
 
   /**
@@ -475,7 +370,6 @@ export default class ItemView extends View {
     title[count ? 'removeClass' : 'addClass'](clsNoChild);
     countEl.html(`${count || ''}`);
     !count && module.setOpen(model, false);
-    this.updateTreeItemA11y();
   }
 
   getCaret() {
@@ -547,7 +441,6 @@ export default class ItemView extends View {
     this.updateOpening();
     this.updateVisibility();
     this.updateMove();
-    this.updateTreeItemA11y();
     this.__render();
     this._rendered = true;
     return this;

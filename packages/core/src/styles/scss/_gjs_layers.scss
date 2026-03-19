@@ -30,11 +30,6 @@ $layerIconSize: 15px !default;
       gap: var(--gjs-flex-item-gap);
       cursor: pointer;
 
-      &:focus-visible {
-        outline: 2px solid var(--gjs-color-blue);
-        outline-offset: -2px;
-      }
-
       &-left,
       &-right {
         display: flex;

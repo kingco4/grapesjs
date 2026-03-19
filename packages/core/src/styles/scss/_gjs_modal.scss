@@ -37,11 +37,6 @@
     position: absolute;
     right: 15px;
     top: 5px;
-
-    &:focus-visible {
-      outline: 2px solid var(--gjs-color-blue);
-      outline-offset: 2px;
-    }
   }
 
   &active .#{gjs_vars.$mdl-prefix}dialog {
@@ -66,36 +61,4 @@
   clear: both;
   display: block;
   margin-bottom: 10px;
-}
-
-.gjs-a11y-status {
-  position: absolute;
-  right: 10px;
-  bottom: 10px;
-  max-width: 320px;
-  z-index: 5;
-  padding: 10px 12px;
-  border-radius: 4px;
-  background: rgba(34, 34, 34, 0.92);
-  color: #fff;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.25);
-  font-size: 12px;
-
-  ul {
-    margin: 8px 0 0;
-    padding-left: 18px;
-  }
-
-  &__title {
-    font-weight: 600;
-
-    &--ok {
-      color: var(--gjs-color-green);
-    }
-  }
-
-  &__more {
-    margin-top: 8px;
-    color: var(--gjs-color-warn);
-  }
 }

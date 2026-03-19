@@ -119,15 +119,8 @@ export default class PanelView extends ModuleView<Panel> {
 
     this.toggleVisible();
 
-    $el.attr({
-      role: 'region',
-      'aria-label': this.model.get('id') ? `${this.model.get('id')} panel` : 'Editor panel',
-    });
-
     if (buttons.length) {
-      var buttonsView = new ButtonsView(buttons, {
-        toolbarLabel: this.model.get('id') ? `${this.model.get('id')} controls` : 'Editor controls',
-      });
+      var buttonsView = new ButtonsView(buttons);
       $el.append(buttonsView.render().el);
     }
 

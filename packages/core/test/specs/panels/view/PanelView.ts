@@ -23,7 +23,7 @@ describe('PanelView', () => {
 
   test('Panel empty', () => {
     fixtures.firstElementChild!.className = '';
-    expect(fixtures.innerHTML).toEqual('<div class="" role="region" aria-label="Editor panel"></div>');
+    expect(fixtures.innerHTML).toEqual('<div class=""></div>');
   });
 
   test('Append content', () => {
@@ -49,10 +49,5 @@ describe('PanelView', () => {
     expect(view.$el.hasClass('gjs-hidden')).toBeTruthy();
     model.set('visible', true);
     expect(view.$el.hasClass('gjs-hidden')).toBeFalsy();
-  });
-
-  test('Panel exposes region semantics', () => {
-    expect(view.el.getAttribute('role')).toBe('region');
-    expect(view.el.getAttribute('aria-label')).toContain('panel');
   });
 });

@@ -12,7 +12,6 @@ export default class ButtonView extends ModuleView<Button> {
   events() {
     return {
       click: 'clicked',
-      keydown: 'handleKeydown',
     };
   }
 
@@ -74,22 +73,8 @@ export default class ButtonView extends ModuleView<Button> {
     const { em, model, $el } = this;
     const attr = model.get('attributes') || {};
     const title = em && em.t && em.t(`panels.buttons.titles.${model.id}`);
-    const titleAttr = title || attr.title;
-    const ariaLabel = attr['aria-label'] || titleAttr || model.get('id') || model.get('label');
-    const attrs = {
-      ...attr,
-      role: attr.role || 'button',
-      tabindex: attr.tabindex ?? 0,
-      'aria-label': ariaLabel,
-      'aria-disabled': String(!!model.disable),
-    } as Record<string, any>;
-
-    if (model.get('togglable') || model.command) {
-      attrs['aria-pressed'] = String(!!model.active);
-    }
-
-    $el.attr(attrs);
-    titleAttr && $el.attr({ title: titleAttr });
+    $el.attr(attr);
+    title && $el.attr({ title });
 
     this.updateClassName();
   }
@@ -147,7 +132,6 @@ export default class ButtonView extends ModuleView<Button> {
     const { disableCls, model } = this;
     const disable = model.disable;
     this.$el[disable ? 'addClass' : 'removeClass'](disableCls);
-    this.$el.attr('aria-disabled', String(!!disable));
   }
 
   /**
@@ -158,19 +142,12 @@ export default class ButtonView extends ModuleView<Button> {
   checkActive() {
     const { model, $el, activeCls } = this;
     model.active ? $el.addClass(activeCls) : $el.removeClass(activeCls);
-    $el.attr('aria-pressed', String(!!model.active));
   }
 
   /**
    * Triggered when button is clicked
    * @return   void
    * */
-  handleKeydown(event: KeyboardEvent) {
-    if (event.key !== 'Enter' && event.key !== ' ') return;
-    event.preventDefault();
-    this.clicked();
-  }
-
   clicked() {
     const { model } = this;
 
