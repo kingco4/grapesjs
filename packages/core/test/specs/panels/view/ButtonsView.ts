@@ -35,9 +35,4 @@ describe('ButtonsView', () => {
     view.collection.add([{}]);
     expect(view.$el.html()).toBeTruthy();
   });
-
-  test('Renders toolbar semantics', () => {
-    expect(view.el.getAttribute('role')).toBe('toolbar');
-    expect(view.el.getAttribute('aria-label')).toBeTruthy();
-  });
 });

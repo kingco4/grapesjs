@@ -21,11 +21,7 @@ export default class FrameView extends ModuleView<Frame, HTMLIFrameElement> {
   }
   /** @ts-ignore */
   get attributes() {
-    return {
-      allowfullscreen: 'allowfullscreen',
-      title: 'GrapesJS canvas',
-      'aria-label': 'GrapesJS canvas',
-    };
+    return { allowfullscreen: 'allowfullscreen' };
   }
 
   dragging = false;
@@ -345,8 +341,6 @@ export default class FrameView extends ModuleView<Frame, HTMLIFrameElement> {
   renderBody() {
     const { config, em, model, ppfx } = this;
     const body = this.getBody();
-    body.setAttribute('tabindex', '-1');
-    body.setAttribute('aria-label', 'Canvas content');
     const win = this.getWindow();
     const hasAutoHeight = model.hasAutoHeight();
     const conf = em.config;

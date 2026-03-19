@@ -45,7 +45,6 @@ import { CanvasSpotBuiltInTypes } from '../../canvas/model/CanvasSpot';
 import DataSourceManager from '../../data_sources';
 import { ComponentsEvents } from '../../dom_components/types';
 import { InitEditorConfig } from '../..';
-import { AccessibilityReport, validateAccessibilityHtml } from './AccessibilityValidator';
 import { EditorEvents, SelectComponentOptions } from '../types';
 import type { EditorEvent, EditorEventCallbacks, EditorEventHandler } from '../types';
 
@@ -1031,15 +1030,6 @@ export default class EditorModel extends Model {
    */
   getWrapper(): ComponentWrapper | undefined {
     return this.Components.getWrapper();
-  }
-
-  validateAccessibility(opts: { html?: string; component?: Component } = {}): AccessibilityReport {
-    const html = opts.html ?? this.getHtml({ component: opts.component });
-    return validateAccessibilityHtml(html);
-  }
-
-  getAccessibilityIssues(opts: { html?: string; component?: Component } = {}) {
-    return this.validateAccessibility(opts).issues;
   }
 
   setCurrentFrame(frameView?: FrameView) {

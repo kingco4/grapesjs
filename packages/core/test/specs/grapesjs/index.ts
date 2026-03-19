@@ -224,54 +224,6 @@ describe('GrapesJS', () => {
       expect(testValue).toEqual(htmlString + '5');
     });
 
-    test('Validate generated accessibility issues deterministically', () => {
-      var editor = grapesjs.init(config);
-      editor.setComponents(`
-        <section>
-          <h3>Skipped heading</h3>
-          <img src="/image.png">
-          <form><input type="text"></form>
-        </section>
-      `);
-
-      const report = editor.validateAccessibility();
-
-      expect(report.issueCount).toBe(3);
-      expect(report.issues.map((issue) => issue.rule)).toEqual(['image-alt', 'heading-order', 'input-label']);
-      expect(editor.getAccessibilityIssues()).toEqual(report.issues);
-    });
-
-    test('Editor view renders accessibility status region', () => {
-      var editor = grapesjs.init(config);
-      const statusEl = editor.getContainer()!.querySelector('.gjs-a11y-status');
-      expect(statusEl).toBeTruthy();
-    });
-
-    test('Validate richer accessibility rules deterministically', () => {
-      var editor = grapesjs.init(config);
-      const report = editor.validateAccessibility({
-        html: `
-          <html>
-            <body>
-              <a href="#"></a>
-              <button></button>
-              <iframe src="/frame"></iframe>
-              <div id="dup"></div>
-              <span id="dup"></span>
-            </body>
-          </html>
-        `,
-      });
-
-      expect(report.issues.map((issue) => issue.rule)).toEqual([
-        'link-name',
-        'button-name',
-        'iframe-title',
-        'duplicate-id',
-        'document-lang',
-      ]);
-    });
-
     test('Stop custom command', () => {
       var editor = grapesjs.init(config);
       let testValue = '';

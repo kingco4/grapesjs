@@ -5,11 +5,8 @@ import Buttons from '../model/Buttons';
 import ButtonView from './ButtonView';
 
 export default class ButtonsView extends ModuleView<Buttons> {
-  toolbarLabel?: string;
-
-  constructor(collection: Buttons, opts: { toolbarLabel?: string } = {}) {
+  constructor(collection: Buttons) {
     super({ collection });
-    this.toolbarLabel = opts.toolbarLabel;
     this.listenTo(this.collection, 'add', this.addTo);
     this.listenTo(this.collection, 'reset remove', this.render);
     this.className = this.pfx + 'buttons';
@@ -57,11 +54,7 @@ export default class ButtonsView extends ModuleView<Buttons> {
     this.collection.each((model) => this.addToCollection(model, fragment));
 
     this.$el.append(fragment);
-    this.$el.attr({
-      class: result(this, 'className'),
-      role: 'toolbar',
-      'aria-label': this.toolbarLabel || 'Editor controls',
-    });
+    this.$el.attr('class', result(this, 'className'));
     return this;
   }
 }
