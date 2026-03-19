@@ -25,7 +25,11 @@ describe('ButtonView', () => {
   });
 
   test('Button empty', () => {
-    expect(fixtures.innerHTML).toEqual('<span class="' + btnClass + '"></span>');
+    expect(view.el.getAttribute('class')).toBe(btnClass);
+    expect(view.el.getAttribute('role')).toBe('button');
+    expect(view.el.getAttribute('tabindex')).toBe('0');
+    expect(view.el.getAttribute('aria-disabled')).toBe('false');
+    expect(view.el.getAttribute('aria-pressed')).toBe('false');
   });
 
   test('Update class', () => {
@@ -84,5 +88,11 @@ describe('ButtonView', () => {
 
   test('Renders correctly', () => {
     expect(view.render()).toBeTruthy();
+  });
+
+  test('Triggers click action on keyboard activation', () => {
+    const spy = jest.spyOn(view, 'clicked');
+    view.handleKeydown(new KeyboardEvent('keydown', { key: 'Enter' }));
+    expect(spy).toHaveBeenCalledTimes(1);
   });
 });
