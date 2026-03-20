@@ -269,3 +269,53 @@ describe('ItemView — handleTreeItemKeydown Alt+Arrow routing', () => {
     expect(ev.preventDefault).toHaveBeenCalled();
   });
 });
+
+// ---------------------------------------------------------------------------
+// handleTreeItemKeydown — 'v' key visibility shortcut
+// ---------------------------------------------------------------------------
+
+describe("ItemView — handleTreeItemKeydown 'v' key visibility shortcut", () => {
+  let em: EditorModel;
+  let itemView: ItemView;
+
+  const makeVEvent = (): KeyboardEvent =>
+    ({
+      key: 'v',
+      altKey: false,
+      preventDefault: jest.fn(),
+      currentTarget: document.createElement('div'),
+    }) as unknown as KeyboardEvent;
+
+  beforeEach(() => {
+    em = new EditorModel();
+    const defCmp = em.get('DomComponents').getType('default').model;
+    const component = new defCmp({}, { em });
+    itemView = new ItemView({
+      model: component,
+      module: em.get('LayerManager'),
+      config: { ...require('../../../../src/navigator/config/config').default(), em },
+    } as any);
+  });
+
+  test("pressing 'v' calls toggleVisibility", () => {
+    const spy = jest.spyOn(itemView, 'toggleVisibility');
+    itemView.handleTreeItemKeydown(makeVEvent());
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
+  test("pressing 'v' calls preventDefault", () => {
+    const ev = makeVEvent();
+    itemView.handleTreeItemKeydown(ev);
+    expect(ev.preventDefault).toHaveBeenCalled();
+  });
+
+  test("pressing 'v' actually toggles the model's display style", () => {
+    const { model, module } = itemView;
+    const visibleBefore = module.isVisible(model);
+    itemView.handleTreeItemKeydown(makeVEvent());
+    expect(module.isVisible(model)).toBe(!visibleBefore);
+    // Second press restores original state
+    itemView.handleTreeItemKeydown(makeVEvent());
+    expect(module.isVisible(model)).toBe(visibleBefore);
+  });
+});

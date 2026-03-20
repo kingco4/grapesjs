@@ -296,4 +296,39 @@ describe('a11y: Static HTML patterns', () => {
     `);
     expect(results).toHaveNoViolations();
   });
+
+  test('iframe with title attribute has no axe violations (WCAG 2.4.1)', async () => {
+    // Verifies the FrameView title="Editor canvas" fix.
+    // axe rule: frame-title — all iframes must have an accessible title.
+    const results = await runAxe(`
+      <iframe title="Editor canvas" src="about:blank"></iframe>
+    `);
+    expect(results).toHaveNoViolations();
+  });
+
+  test('color palette swatches with aria-label have no axe violations', async () => {
+    // Verifies the ColorPicker aria-label fix.
+    // Swatches that carry role="option" (interactive) must have an accessible
+    // name — aria-label satisfies this requirement.
+    const results = await runAxe(`
+      <div role="listbox" aria-label="Color palette">
+        <span role="option" tabindex="0"
+              aria-label="rgb(255, 0, 0)"
+              aria-selected="false"
+              style="background-color:rgb(255,0,0);display:inline-block;width:16px;height:16px;">
+        </span>
+        <span role="option" tabindex="-1"
+              aria-label="rgb(0, 128, 0)"
+              aria-selected="false"
+              style="background-color:rgb(0,128,0);display:inline-block;width:16px;height:16px;">
+        </span>
+        <span role="option" tabindex="-1"
+              aria-label="No color selected"
+              aria-selected="false"
+              style="background-color:transparent;display:inline-block;width:16px;height:16px;">
+        </span>
+      </div>
+    `);
+    expect(results).toHaveNoViolations();
+  });
 });

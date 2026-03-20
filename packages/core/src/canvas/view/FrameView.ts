@@ -21,7 +21,7 @@ export default class FrameView extends ModuleView<Frame, HTMLIFrameElement> {
   }
   /** @ts-ignore */
   get attributes() {
-    return { allowfullscreen: 'allowfullscreen' };
+    return { allowfullscreen: 'allowfullscreen', title: 'Editor canvas' };
   }
 
   dragging = false;

@@ -291,6 +291,15 @@ export default class ItemView extends View {
       return;
     }
 
+    if (key === 'v') {
+      // Toggle layer visibility without leaving the tree keyboard navigation
+      // model. The visibility button has tabindex="-1" by design (roving
+      // tabindex for trees), so 'v' is the keyboard-only path to this action.
+      ev.preventDefault();
+      this.toggleVisibility();
+      return;
+    }
+
     if (key === 'ArrowRight') {
       ev.preventDefault();
       if (module.getComponents(model).length && !module.isOpen(model)) {

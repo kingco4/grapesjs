@@ -172,6 +172,8 @@ export default function ($, undefined?: any) {
         html.push(
           '<span title="' +
             formattedString +
+            '" aria-label="' +
+            formattedString +
             '" data-color="' +
             tiny.toRgbString() +
             '" class="' +
@@ -185,10 +187,9 @@ export default function ($, undefined?: any) {
         html.push(
           $('<div />')
             .append(
-              $('<span data-color="" style="background-color:transparent;" class="' + cls + '"></span>').attr(
-                'title',
-                opts.noColorSelectedText,
-              ),
+              $('<span data-color="" style="background-color:transparent;" class="' + cls + '"></span>')
+                .attr('title', opts.noColorSelectedText)
+                .attr('aria-label', opts.noColorSelectedText),
             )
             .html(),
         );
