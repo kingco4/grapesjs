@@ -33,6 +33,9 @@
 }
 .#{gjs_vars.$app-prefix}badge-warning {
   background-color: var(--gjs-color-yellow);
+  // WCAG 1.4.3 fix: #fff on #ffca6f yields ~1.48:1 — fails AA.
+  // #333 on #ffca6f yields ~7.39:1 — passes AAA (4.5:1 required for normal text).
+  color: #333;
 }
 .#{gjs_vars.$app-prefix}placeholder,
 .#{gjs_vars.$com-prefix}placeholder,
