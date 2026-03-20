@@ -312,6 +312,12 @@ export default class ItemView extends View {
 
     if (key === 'ArrowDown' || key === 'ArrowUp') {
       ev.preventDefault();
+      if (ev.altKey) {
+        // Alt+Arrow: keyboard reordering among siblings (ARIA APG pattern).
+        // Plain Arrow is reserved for tree focus navigation (below).
+        key === 'ArrowUp' ? this.moveLayerUp() : this.moveLayerDown();
+        return;
+      }
       const allItems = Array.from(
         document.querySelectorAll<HTMLElement>(`[role="treeitem"]`),
       ).filter((el) => el.tabIndex >= 0 || el.closest('[role="tree"]'));
@@ -391,6 +397,53 @@ export default class ItemView extends View {
     ev?.stopPropagation();
     const { module, model } = this;
     module.setLayerData(model, { hovered: false });
+  }
+
+  /**
+   * Move this layer one position earlier among its siblings.
+   * Called by Alt+ArrowUp in handleTreeItemKeydown.
+   * No-op when the component is already the first sibling.
+   */
+  moveLayerUp() {
+    const { model } = this;
+    const parent = model.parent();
+    if (!parent) return;
+    const currentIndex = model.index();
+    if (currentIndex <= 0) return;
+    model.move(parent, { at: currentIndex - 1 });
+    this._refocusModel(model);
+  }
+
+  /**
+   * Move this layer one position later among its siblings.
+   * Called by Alt+ArrowDown in handleTreeItemKeydown.
+   * No-op when the component is already the last sibling.
+   *
+   * Passes `currentIndex + 2` to model.move() because the method internally
+   * adjusts `at` by -1 when moving forward within the same parent
+   * (to account for the index shift after the element is removed).
+   */
+  moveLayerDown() {
+    const { model } = this;
+    const parent = model.parent();
+    if (!parent) return;
+    const currentIndex = model.index();
+    const total = parent.components().length;
+    if (currentIndex >= total - 1) return;
+    model.move(parent, { at: currentIndex + 2 });
+    this._refocusModel(model);
+  }
+
+  /**
+   * Re-focus the treeitem element for this model after a layer re-render.
+   * model.viewLayer is updated to the new ItemView instance by initComponent(),
+   * so a requestAnimationFrame is sufficient to read the post-render reference.
+   */
+  private _refocusModel(model: Component) {
+    requestAnimationFrame(() => {
+      const view = model.viewLayer as ItemView | undefined;
+      view?.getItemContainer().get(0)?.focus();
+    });
   }
 
   /**
