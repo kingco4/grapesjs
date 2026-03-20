@@ -45,14 +45,20 @@ export default class AssetView<TModel extends Asset = Asset> extends View<TModel
 
   template(view: AssetView, asset: Asset) {
     const { pfx } = this;
+    const src = asset.get('src') || '';
+    const name = asset.get('name') || src;
     return `
-      <div class="${pfx}preview-cont">
+      <div class="${pfx}preview-cont" aria-hidden="true">
         ${this.getPreview()}
       </div>
       <div class="${pfx}meta">
         ${this.getInfo()}
       </div>
-      <div class="${pfx}close" data-toggle="asset-remove">
+      <div class="${pfx}close"
+        data-toggle="asset-remove"
+        role="button"
+        tabindex="0"
+        aria-label="Remove asset${name ? ': ' + name : ''}">
         &Cross;
       </div>
     `;
@@ -82,6 +88,7 @@ export default class AssetView<TModel extends Asset = Asset> extends View<TModel
     const el = this.el;
     el.innerHTML = this.template(this, this.model);
     el.className = this.className!;
+    el.setAttribute('role', 'listitem');
     return this;
   }
 }

@@ -23,7 +23,7 @@ describe('PanelView', () => {
 
   test('Panel empty', () => {
     fixtures.firstElementChild!.className = '';
-    expect(fixtures.innerHTML).toEqual('<div class=""></div>');
+    expect(fixtures.innerHTML).toEqual('<div class="" role="region" aria-label="Editor panel"></div>');
   });
 
   test('Append content', () => {

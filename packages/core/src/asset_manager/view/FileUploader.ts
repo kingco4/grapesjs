@@ -29,8 +29,9 @@ export default class FileUploaderView extends View {
 
   template({ pfx, title, uploadId, disabled, multiUpload }: FileUploaderTemplateProps) {
     return html`
-      <form>
+      <form aria-label="${title || 'Upload file'}">
         <div id="${pfx}title">${title}</div>
+        <label for="${uploadId}" class="${pfx}file-label">${title || 'Upload file'}</label>
         <input
           data-input
           type="file"
@@ -39,6 +40,7 @@ export default class FileUploaderView extends View {
           accept="*/*"
           ${disabled ? 'disabled' : ''}
           ${multiUpload ? 'multiple' : ''}
+          aria-describedby="${pfx}title"
         />
         <div style="clear:both;"></div>
       </form>

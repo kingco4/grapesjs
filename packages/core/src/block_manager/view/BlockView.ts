@@ -178,6 +178,8 @@ export default class BlockView extends View<Block> {
     `;
     el.title = attr.title || el.textContent?.trim();
     el.setAttribute('draggable', `${hasDnd(em) && !disable ? true : false}`);
+    el.setAttribute('role', attr.role || 'listitem');
+    el.setAttribute('aria-label', attr['aria-label'] || el.textContent?.trim() || '');
     // @ts-ignore
     const result = render && render({ el, model, className, prefix: ppfx });
     if (result) el.innerHTML = result;

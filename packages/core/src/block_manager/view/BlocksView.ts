@@ -187,9 +187,9 @@ export default class BlocksView extends View {
     delete this.blocksEl;
     this.renderedCategories = new Map();
     this.el.innerHTML = `
-      <div class="${this.catsClass}"></div>
+      <div class="${this.catsClass}" role="list" aria-label="Block categories"></div>
       <div class="${this.noCatClass}">
-        <div class="${this.blockContClass}"></div>
+        <div class="${this.blockContClass}" role="list" aria-label="Blocks"></div>
       </div>
     `;
 
@@ -197,6 +197,8 @@ export default class BlocksView extends View {
     this.append(frag);
     const cls = `${this.blockContClass}s ${ppfx}one-bg ${ppfx}two-color`;
     this.$el.addClass(cls);
+    this.$el.attr('role', 'region');
+    this.$el.attr('aria-label', 'Block manager');
     this.rendered = true;
     return this;
   }

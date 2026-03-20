@@ -14,12 +14,14 @@ export default class AssetsView extends View {
   template({ pfx, ppfx, em }: AssetsView) {
     let form = '';
     if (this.config.showUrlInput) {
+      const inputId = `${pfx}asset-url-input`;
       form = `
-          <form class="${pfx}add-asset">
+          <form class="${pfx}add-asset" aria-label="Add asset by URL">
             <div class="${ppfx}field ${pfx}add-field">
-              <input placeholder="${em?.t('assetManager.inputPlh')}"/>
+              <label for="${inputId}" class="${ppfx}sr-only">${em?.t('assetManager.inputPlh') || 'Asset URL'}</label>
+              <input id="${inputId}" placeholder="${em?.t('assetManager.inputPlh')}"/>
             </div>
-            <button class="${ppfx}btn-prim">${em?.t('assetManager.addButton')}</button>
+            <button class="${ppfx}btn-prim" type="submit">${em?.t('assetManager.addButton')}</button>
             <div style="clear:both"></div>
           </form>
       `;
@@ -30,7 +32,7 @@ export default class AssetsView extends View {
       <div class="${pfx}assets-header">
         ${form}
       </div>
-      <div class="${pfx}assets" data-el="assets"></div>
+      <div class="${pfx}assets" data-el="assets" role="list" aria-label="Assets"></div>
       <div style="clear:both"></div>
     </div>
     `;

@@ -87,11 +87,24 @@ export default class AssetImageView extends AssetView<AssetImage> {
     e.stopImmediatePropagation();
     this.model.collection.remove(this.model);
   }
+
+  /**
+   * Keyboard handler for the remove button
+   * @private
+   */
+  onRemoveKey(e: KeyboardEvent) {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      this.model.collection.remove(this.model);
+    }
+  }
 }
 
 AssetImageView.prototype.events = {
   // @ts-ignore
   'click [data-toggle=asset-remove]': 'onRemove',
+  'keydown [data-toggle=asset-remove]': 'onRemoveKey',
   click: 'onClick',
   dblclick: 'onDblClick',
 };

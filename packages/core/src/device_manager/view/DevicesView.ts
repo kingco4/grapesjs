@@ -15,17 +15,18 @@ export default class DevicesView extends View {
   devicesEl?: JQuery<HTMLElement>;
 
   template({ ppfx, label }: { ppfx: string; label: string }) {
+    const selectId = `${ppfx}devices-select`;
     return html`
-      <div class="${ppfx}device-label">${label}</div>
+      <label class="${ppfx}device-label" for="${selectId}">${label}</label>
       <div class="${ppfx}field ${ppfx}select">
         <span id="${ppfx}input-holder">
-          <select class="${ppfx}devices"></select>
+          <select id="${selectId}" class="${ppfx}devices" aria-label="${label}"></select>
         </span>
-        <div class="${ppfx}sel-arrow">
+        <div class="${ppfx}sel-arrow" aria-hidden="true">
           <div class="${ppfx}d-s-arrow"></div>
         </div>
       </div>
-      <button style="display:none" class="${ppfx}add-trasp" data-add-trasp>+</button>
+      <button style="display:none" class="${ppfx}add-trasp" data-add-trasp aria-label="Add device">+</button>
     `;
   }
 

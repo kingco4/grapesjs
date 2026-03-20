@@ -70,6 +70,7 @@ export default class PropertyView extends View<Property> {
     return {
       change: 'inputValueChanged',
       [`click [${clearProp}]`]: 'clear',
+      [`keydown [${clearProp}]`]: 'clearOnKey',
     };
   }
 
@@ -87,19 +88,26 @@ export default class PropertyView extends View<Property> {
     const { icon = '', info = '' } = model.attributes;
     const icons = em?.getConfig().icons;
     const iconClose = icons?.close || '';
+    const label = model.getLabel();
 
     return `
       <span class="${pfx}icon ${icon}" title="${info}">
-        ${model.getLabel()}
+        ${label}
       </span>
-      ${!parent ? `<div class="${pfx}clear" style="display: none" ${clearProp}>${iconClose}</div>` : ''}
+      ${
+        !parent
+          ? `<div class="${pfx}clear" style="display: none" ${clearProp}
+              role="button" tabindex="0" aria-label="Clear ${label}">${iconClose}</div>`
+          : ''
+      }
     `;
   }
 
   templateInput(model: Property) {
+    const label = model.getLabel();
     return `
       <div class="${this.ppfx}field">
-        <input placeholder="${model.getDefaultValue()}"/>
+        <input placeholder="${model.getDefaultValue()}" aria-label="${label}"/>
       </div>
     `;
   }
@@ -143,6 +151,17 @@ export default class PropertyView extends View<Property> {
   clear(ev: Event) {
     ev && ev.stopPropagation();
     this.model.clear();
+  }
+
+  /**
+   * Keyboard handler for the clear button
+   */
+  clearOnKey(ev: KeyboardEvent) {
+    if (ev.key === 'Enter' || ev.key === ' ') {
+      ev.preventDefault();
+      ev.stopPropagation();
+      this.model.clear();
+    }
   }
 
   /**

@@ -25,7 +25,7 @@ describe('ButtonView', () => {
   });
 
   test('Button empty', () => {
-    expect(fixtures.innerHTML).toEqual('<span class="' + btnClass + '"></span>');
+    expect(fixtures.innerHTML).toEqual('<span role="button" tabindex="0" aria-label="" aria-disabled="false" aria-pressed="false" class="' + btnClass + '"></span>');
   });
 
   test('Update class', () => {

@@ -51,6 +51,7 @@ export default class TraitSelectView extends TraitView {
 
       input += '</select>';
       this.$input = $(input);
+      this.$input.attr('id', this.getInputId());
       const val = model.getTargetValue();
       const valResult = values.indexOf(val) >= 0 ? val : model.get('default');
       !isUndefined(valResult) && this.$input!.val(valResult);

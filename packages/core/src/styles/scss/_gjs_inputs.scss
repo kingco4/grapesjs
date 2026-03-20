@@ -44,12 +44,23 @@
     text-shadow: 0 0 0 var(--gjs-secondary-light-color);
   }
 
-  &input:focus,
-  &button:focus,
-  &btn-prim:focus,
-  &select:focus,
-  &select select:focus {
+  // Remove default browser outline only when a mouse/pointer is used (:focus-visible
+  // still shows the outline for keyboard navigation, satisfying WCAG 2.4.7).
+  &input:focus:not(:focus-visible),
+  &button:focus:not(:focus-visible),
+  &btn-prim:focus:not(:focus-visible),
+  &select:focus:not(:focus-visible),
+  &select select:focus:not(:focus-visible) {
     outline: none;
+  }
+
+  &input:focus-visible,
+  &button:focus-visible,
+  &btn-prim:focus-visible,
+  &select:focus-visible,
+  &select select:focus-visible {
+    outline: 2px solid var(--gjs-color-blue);
+    outline-offset: 2px;
   }
 
   &field {
@@ -67,8 +78,13 @@
       padding: var(--gjs-input-padding);
       z-index: 1;
 
-      &:focus {
+      &:focus:not(:focus-visible) {
         outline: none;
+      }
+
+      &:focus-visible {
+        outline: 2px solid var(--gjs-color-blue);
+        outline-offset: 1px;
       }
     }
 
@@ -306,8 +322,13 @@
     margin: 0;
     height: 100%;
 
-    &:focus {
+    &:focus:not(:focus-visible) {
       outline: none;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--gjs-color-blue);
+      outline-offset: 1px;
     }
 
     &::-webkit-slider-thumb {

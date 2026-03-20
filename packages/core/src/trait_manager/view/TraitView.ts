@@ -32,7 +32,17 @@ export default class TraitView extends View<Trait> {
   templateLabel(cmp?: Component) {
     const { ppfx } = this;
     const label = this.getLabel();
-    return `<div class="${ppfx}label" title="${label}">${label}</div>`;
+    const inputId = this.getInputId();
+    return `<label class="${ppfx}label" for="${inputId}" title="${label}">${label}</label>`;
+  }
+
+  /**
+   * Returns a stable id for the trait input, used to associate label and input
+   * @private
+   */
+  getInputId(): string {
+    const { pfx, model } = this;
+    return `${pfx}trait-${model.get('name') || this.cid}`;
   }
 
   templateInput(data: ReturnType<TraitView['getClbOpts']>) {
@@ -186,6 +196,7 @@ export default class TraitView extends View<Trait> {
       const input: JQuery<HTMLInputElement> = $(`<input type="${type}">`);
       const i18nAttr = em.t(`traitManager.traits.attributes.${name}`) || {};
       input.attr({
+        id: this.getInputId(),
         placeholder,
         ...i18nAttr,
       });
