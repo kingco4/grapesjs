@@ -696,6 +696,10 @@ export default class CanvasView extends ModuleView<Canvas> {
     this.spotsEl = el.querySelector('[data-spots]')!;
     this.cvStyle = el.querySelector('[data-canvas-style]')!;
     el.className = getUiClass(em, this.className);
+    el.setAttribute('role', 'main');
+    el.setAttribute('id', 'gjs-canvas');
+    el.setAttribute('aria-label', 'Editor canvas');
+    el.setAttribute('tabindex', '-1');
     if (config.scrollableCanvas === true) {
       el.style.overflow = 'auto';
     }

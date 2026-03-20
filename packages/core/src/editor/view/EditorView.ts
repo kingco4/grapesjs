@@ -110,6 +110,13 @@ export default class EditorView extends View<EditorModel> {
   private renderAccessibilityUi() {
     if (this.accessibilityStatusEl && this.accessibilityLiveEl) return;
 
+    // Skip navigation: keyboard users can jump straight to the canvas
+    const skipLink = document.createElement('a');
+    skipLink.href = '#gjs-canvas';
+    skipLink.className = 'gjs-skip-link';
+    skipLink.textContent = 'Skip to canvas';
+    this.el.insertBefore(skipLink, this.el.firstChild);
+
     this.accessibilityStatusEl = document.createElement('div');
     this.accessibilityStatusEl.className = 'gjs-a11y-status';
     this.accessibilityStatusEl.setAttribute('role', 'status');

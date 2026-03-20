@@ -166,6 +166,26 @@ $colorsAll: (one, var(--gjs-primary-color)), (two, var(--gjs-secondary-color)), 
   color: #ffffff;
 }
 
+// Skip navigation link — visually hidden until focused by keyboard users (WCAG 2.4.1)
+.#{gjs_vars.$app-prefix}skip-link {
+  position: absolute;
+  top: -100%;
+  left: 6px;
+  z-index: 9999;
+  padding: 8px 16px;
+  background: var(--gjs-primary-color);
+  color: var(--gjs-secondary-color);
+  border-radius: 0 0 4px 4px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+
+  &:focus {
+    top: 0;
+  }
+}
+
 // Screen-reader-only utility: visually hidden but accessible to AT
 .#{gjs_vars.$app-prefix}sr-only {
   position: absolute !important;
